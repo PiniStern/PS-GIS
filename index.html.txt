@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PS-GIS | פתרונות GIS מהירים ומדויקים</title>
+
+  <!-- פונט עברי נחמד -->
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Heebo", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f3f4f6;
+      color: #0f172a;
+      line-height: 1.6;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* צבעים מותגיים בערך כמו בתמונות */
+    :root {
+      --primary: #02b38f;
+      --primary-dark: #029272;
+      --accent-blue: #4f46e5;
+      --accent-cyan: #0ea5e9;
+      --bg-soft: #e7fbf4;
+      --text-muted: #6b7280;
+      --card-radius: 18px;
+      --shadow-soft: 0 20px 40px rgba(15, 23, 42, 0.08);
+    }
+
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: radial-gradient(circle at top left, #e7fbf4, #f9fafb 50%, #e0f2fe);
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    /* HEADER */
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(14px);
+      background: rgba(255, 255, 255, 0.92);
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.85rem 0;
+      gap: 1rem;
+    }
+
+    .logo-box {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .logo-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--primary), #1dd3a7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 1.1rem;
+      box-shadow: 0 14px 30px rgba(2, 179, 143, 0.3);
+    }
+
+    .logo-text-main {
+      font-weight: 800;
+      font-size: 1.2rem;
+      color: #0f172a;
+    }
+
+    .logo-text-sub {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      font-size: 0.95rem;
+    }
+
+    .nav a {
+      color: #111827;
+    }
+
+    .nav a:hover {
+      color: var(--primary);
+    }
+
+    .btn-contact-nav {
+      background: var(--primary);
+      color: #ffffff;
+      padding: 0.55rem 1.2rem;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      box-shadow: 0 12px 25px rgba(2, 179, 143, 0.35);
+    }
+
+    .btn-contact-nav:hover {
+      background: var(--primary-dark);
+    }
+
+    .nav-toggle {
+      display: none;
+      border: 1px solid #e5e7eb;
+      border-radius: 999px;
+      background: #ffffff;
+      padding: 0.4rem 0.7rem;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    /* HERO */
+
+    .hero {
+      padding: 3.5rem 0 3rem;
+    }
+
+    .hero-inner {
+      text-align: center;
+      padding: 3.5rem 2rem 3rem;
+      border-radius: 36px;
+      background: radial-gradient(circle at left, rgba(2, 179, 143, 0.18), transparent 55%),
+                  radial-gradient(circle at right, rgba(45, 212, 191, 0.15), transparent 55%),
+                  #f5fffb;
+      box-shadow: var(--shadow-soft);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-over-icon {
+      position: absolute;
+      top: 18%;
+      left: 8%;
+      width: 52px;
+      height: 52px;
+      background: #ffffff;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+      border: 1px solid #e5e7eb;
+      color: var(--primary);
+      font-size: 1.3rem;
+    }
+
+    .hero-over-icon.secondary {
+      top: 60%;
+      left: auto;
+      right: 10%;
+      color: var(--accent-blue);
+    }
+
+    .hero-kicker {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #059669;
+      margin-bottom: 0.4rem;
+    }
+
+    .hero-title {
+      font-size: clamp(2rem, 3.4vw, 2.8rem);
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+    }
+
+    .hero-subtitle {
+      max-width: 720px;
+      margin: 0 auto 1.8rem;
+      color: var(--text-muted);
+      font-size: 0.98rem;
+    }
+
+    .hero-cta {
+      display: flex;
+      justify-content: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-bottom: 2.2rem;
+    }
+
+    .btn-primary {
+      border-radius: 999px;
+      border: none;
+      padding: 0.85rem 1.7rem;
+      font-size: 0.98rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: linear-gradient(135deg, var(--primary), #16c79a);
+      color: #ffffff;
+      box-shadow: 0 18px 36px rgba(2, 179, 143, 0.4);
+    }
+
+    .btn-primary:hover {
+      opacity: 0.96;
+    }
+
+    .btn-ghost {
+      border-radius: 999px;
+      border: 1px solid #d1d5db;
+      padding: 0.85rem 1.7rem;
+      font-size: 0.98rem;
+      font-weight: 500;
+      cursor: pointer;
+      background: #ffffff;
+      color: #111827;
+    }
+
+    .btn-ghost:hover {
+      border-color: #9ca3af;
+    }
+
+    .hero-features-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1.1rem;
+      margin-top: 0.5rem;
+    }
+
+    .hero-feature-card {
+      background: #ffffff;
+      border-radius: 26px;
+      padding: 1.1rem 0.6rem 1.2rem;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid #e5e7eb;
+    }
+
+    .hero-feature-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 0.7rem;
+      color: #ffffff;
+      font-size: 1.25rem;
+    }
+
+    .hero-feature-card:nth-child(1) .hero-feature-icon {
+      background: linear-gradient(135deg, #4f46e5, #6366f1);
+    }
+
+    .hero-feature-card:nth-child(2) .hero-feature-icon {
+      background: linear-gradient(135deg, #10b981, #22c55e);
+    }
+
+    .hero-feature-card:nth-child(3) .hero-feature-icon {
+      background: linear-gradient(135deg, #0ea5e9, #22c1c3);
+    }
+
+    .hero-feature-card:nth-child(4) .hero-feature-icon {
+      background: linear-gradient(135deg, #f97316, #ec4899);
+    }
+
+    .hero-feature-title {
+      font-weight: 700;
+      margin-bottom: 0.15rem;
+    }
+
+    .hero-feature-sub {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    /* SECTION SHARED */
+
+    section {
+      padding: 3.5rem 0;
+    }
+
+    .section-heading {
+      text-align: center;
+      margin-bottom: 2.3rem;
+    }
+
+    .section-title {
+      font-size: 2.1rem;
+      font-weight: 800;
+      margin-bottom: 0.4rem;
+    }
+
+    .section-title span {
+      color: var(--primary);
+    }
+
+    .section-subtitle {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    /* SERVICES */
+
+    .services {
+      background: #ffffff;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1.4rem;
+    }
+
+    .service-card {
+      background: #ffffff;
+      border-radius: var(--card-radius);
+      padding: 1.4rem 1.5rem;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid #e5e7eb;
+    }
+
+    .service-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.9rem;
+      color: #ffffff;
+      font-size: 1.2rem;
+      background: linear-gradient(135deg, var(--accent-cyan), #0ea5e9);
+    }
+
+    .service-title {
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+      font-size: 1rem;
+    }
+
+    .service-text {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    /* PROJECTS */
+
+    .projects {
+      background: #f9fafb;
+    }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1.5rem;
+    }
+
+    .project-card {
+      border-radius: 24px;
+      background: #ffffff;
+      overflow: hidden;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid #e5e7eb;
+    }
+
+    .project-image {
+      height: 160px;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+
+    .project-badge {
+      position: absolute;
+      top: 0.8rem;
+      left: 0.9rem;
+      background: rgba(15, 23, 42, 0.78);
+      color: #ffffff;
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      font-size: 0.72rem;
+    }
+
+    .project-body {
+      padding: 1.1rem 1.3rem 1.25rem;
+    }
+
+    .project-title {
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .project-text {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    .project-image.p1 {
+      background-image: linear-gradient(120deg, rgba(56, 189, 248, 0.45), rgba(14, 116, 144, 0.9)),
+        url("https://images.pexels.com/photos/5726889/pexels-photo-5726889.jpeg?auto=compress&cs=tinysrgb&w=1200");
+    }
+
+    .project-image.p2 {
+      background-image: linear-gradient(120deg, rgba(79, 70, 229, 0.45), rgba(56, 189, 248, 0.8)),
+        url("https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg?auto=compress&cs=tinysrgb&w=1200");
+    }
+
+    .project-image.p3 {
+      background-image: linear-gradient(120deg, rgba(16, 185, 129, 0.6), rgba(37, 99, 235, 0.75)),
+        url("https://images.pexels.com/photos/3769138/pexels-photo-3769138.jpeg?auto=compress&cs=tinysrgb&w=1200");
+    }
+
+    .project-image.p4 {
+      background-image: linear-gradient(120deg, rgba(236, 72, 153, 0.6), rgba(30, 64, 175, 0.7)),
+        url("https://images.pexels.com/photos/248159/pexels-photo-248159.jpeg?auto=compress&cs=tinysrgb&w=1200");
+    }
+
+    .project-image.p5 {
+      background-image: linear-gradient(120deg, rgba(14, 165, 233, 0.6), rgba(34, 197, 94, 0.8)),
+        url("https://images.pexels.com/photos/1643383/pexels-photo-1643383.jpeg?auto=compress&cs=tinysrgb&w=1200");
+    }
+
+    .project-image.p6 {
+      background-image: linear-gradient(120deg, rgba(59, 130, 246, 0.7), rgba(20, 184, 166, 0.8)),
+        url("https://images.pexels.com/photos/3861958/pexels-photo-3861958.jpeg?auto=compress&cs=tinysrgb&w=1200");
+    }
+
+    /* CONTACT */
+
+    .contact {
+      background: radial-gradient(circle at top left, rgba(16, 185, 129, 0.18), transparent 55%),
+                  radial-gradient(circle at bottom right, rgba(56, 189, 248, 0.15), transparent 55%),
+                  #f5fffb;
+    }
+
+    .contact-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.1fr);
+      gap: 2rem;
+      align-items: flex-start;
+    }
+
+    .contact-text {
+      max-width: 480px;
+    }
+
+    .contact-text p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 1.6rem;
+    }
+
+    .contact-info-grid {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .contact-info-card {
+      background: #ffffff;
+      border-radius: var(--card-radius);
+      padding: 0.95rem 1.15rem;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.9rem;
+      font-size: 0.9rem;
+    }
+
+    .contact-info-label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .contact-info-value {
+      font-weight: 600;
+    }
+
+    .contact-info-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      background: #ecfdf5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      font-size: 1.1rem;
+    }
+
+    .form-card {
+      background: #ffffff;
+      border-radius: 26px;
+      padding: 1.8rem 1.6rem 1.5rem;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid #e5e7eb;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      font-size: 0.86rem;
+    }
+
+    .form-group.full {
+      grid-column: 1 / -1;
+    }
+
+    label span {
+      color: #ef4444;
+    }
+
+    input,
+    textarea {
+      border-radius: 12px;
+      border: 1px solid #d1d5db;
+      padding: 0.7rem 0.75rem;
+      font-family: inherit;
+      font-size: 0.9rem;
+      outline: none;
+      background: #f9fafb;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+
+    input:focus,
+    textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 1px rgba(2, 179, 143, 0.25);
+      background: #ffffff;
+    }
+
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    .form-actions {
+      margin-top: 1.3rem;
+    }
+
+    .btn-submit {
+      width: 100%;
+      border-radius: 999px;
+      border: none;
+      padding: 0.9rem 1.4rem;
+      font-size: 0.98rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: linear-gradient(135deg, var(--primary), #16c79a);
+      color: #ffffff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+    }
+
+    .btn-submit:hover {
+      opacity: 0.96;
+    }
+
+    /* FOOTER */
+
+    footer {
+      padding: 1.6rem 0 2rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    /* RESPONSIVE */
+
+    @media (max-width: 900px) {
+      .header-inner {
+        padding: 0.8rem 0;
+      }
+
+      .nav {
+        display: none;
+      }
+
+      .nav-toggle {
+        display: inline-flex;
+      }
+
+      .hero-inner {
+        padding: 2.8rem 1.4rem 2.6rem;
+        border-radius: 26px;
+      }
+
+      .hero-features-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .services-grid,
+      .projects-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .contact-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .contact-text {
+        max-width: none;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .hero-features-row,
+      .services-grid,
+      .projects-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-inner {
+        padding-inline: 1rem;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-over-icon,
+      .hero-over-icon.secondary {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+<div class="page">
+  <!-- HEADER -->
+  <header>
+    <div class="container">
+      <div class="header-inner">
+        <div class="logo-box">
+          <div class="logo-icon">PS</div>
+          <div>
+            <div class="logo-text-main">PS-GIS</div>
+            <div class="logo-text-sub">מומחה במידע גיאוגרפי</div>
+          </div>
+        </div>
+
+        <nav class="nav">
+          <a href="#hero">בית</a>
+          <a href="#services">שירותים</a>
+          <a href="#projects">פרויקטים</a>
+          <button class="btn-contact-nav" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">
+            צור קשר
+          </button>
+        </nav>
+
+        <button class="nav-toggle" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">
+          תפריט / קשר
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <main>
+    <section class="hero" id="hero">
+      <div class="container">
+        <div class="hero-inner">
+          <div class="hero-over-icon">▤</div>
+          <div class="hero-over-icon secondary">◎</div>
+
+          <div class="hero-kicker">פתרונות GIS</div>
+          <h1 class="hero-title">מהירים ומדויקים</h1>
+
+          <p class="hero-subtitle">
+            עם ניסיון של מעל עשור בתחום ה-GIS ומאות מפות שיצרתי, אני מספק שירות מקצועי ואישי – מיצירת מפות דיגיטליות
+            מדויקות ועד ניתוח מרחבים מורכבים. הניסיון שלי מבטיח תוצאות איכותיות בזמן קצר.
+          </p>
+
+          <div class="hero-cta">
+            <button class="btn-primary" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">
+              בואו נתחיל
+            </button>
+            <button class="btn-ghost" onclick="document.getElementById('services').scrollIntoView({behavior:'smooth'})">
+              גלה את השירותים
+            </button>
+          </div>
+
+          <div class="hero-features-row">
+            <div class="hero-feature-card">
+              <div class="hero-feature-icon">⚡</div>
+              <div class="hero-feature-title">מהיר</div>
+              <div class="hero-feature-sub">תגובה ושירות</div>
+            </div>
+            <div class="hero-feature-card">
+              <div class="hero-feature-icon">🧩</div>
+              <div class="hero-feature-title">מגוון</div>
+              <div class="hero-feature-sub">פרויקטים מורכבים</div>
+            </div>
+            <div class="hero-feature-card">
+              <div class="hero-feature-icon">📍</div>
+              <div class="hero-feature-title">מאות</div>
+              <div class="hero-feature-sub">מפות שבניתי</div>
+            </div>
+            <div class="hero-feature-card">
+              <div class="hero-feature-icon">🏅</div>
+              <div class="hero-feature-title">+10</div>
+              <div class="hero-feature-sub">שנות ניסיון</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SERVICES -->
+    <section class="services" id="services">
+      <div class="container">
+        <div class="section-heading">
+          <h2 class="section-title">השירותים <span>שאני מציע</span></h2>
+          <p class="section-subtitle">
+            מגוון רחב של פתרונות GIS מקצועיים בשירות אישי ומהיר
+          </p>
+        </div>
+
+        <div class="services-grid">
+          <div class="service-card">
+            <div class="service-icon">🗺️</div>
+            <div class="service-title">יצירת מפות דיגיטליות</div>
+            <div class="service-text">
+              פיתוח מפות דיגיטליות מקצועיות ומדויקות בהתאמה אישית לצרכים שלך, כולל שילוב נתונים גיאוגרפיים מרחביים.
+            </div>
+          </div>
+
+          <div class="service-card">
+            <div class="service-icon">📊</div>
+            <div class="service-title">ניתוחים מרחביים מורכבים</div>
+            <div class="service-text">
+              ביצוע ניתוחים מרחביים מתקדמים לזיהוי דפוסים, מגמות והזדמנויות עסקיות. כלים אנליטיים מתקדמים לתמיכה בהחלטות.
+            </div>
+          </div>
+
+          <div class="service-card">
+            <div class="service-icon">💾</div>
+            <div class="service-title">ניהול מסדי נתונים גיאוגרפיים</div>
+            <div class="service-text">
+              בנייה וניהול של מסדי נתונים גיאוגרפיים מאורגנים, כולל אינטגרציה עם מערכות קיימות ושמירה על איכות המידע.
+            </div>
+          </div>
+
+          <div class="service-card">
+            <div class="service-icon">🌳</div>
+            <div class="service-title">ניתוחים סביבתיים</div>
+            <div class="service-text">
+              ניתוחים מרחביים סביבתיים מתקדמים בעזרת כלי GIS – הערכת השפעה סביבתית, ניטור משאבי טבע ותכנון אקולוגי.
+            </div>
+          </div>
+
+          <div class="service-card">
+            <div class="service-icon">🖼️</div>
+            <div class="service-title">דיגיטציה והמרת נתונים</div>
+            <div class="service-text">
+              המרת מפות ונתונים ישנים לפורמטים דיגיטליים מודרניים, שיפור איכות הנתונים והכנתם לשימוש באפליקציות GIS.
+            </div>
+          </div>
+
+          <div class="service-card">
+            <div class="service-icon">📡</div>
+            <div class="service-title">יצירת שכבות מידע</div>
+            <div class="service-text">
+              פיתוח שכבות מידע גיאוגרפיות מותאמות אישית, כולל עיבוד תמונות לוויין, נתוני שטח ומידע מרחבי נוסף.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section class="projects" id="projects">
+      <div class="container">
+        <div class="section-heading">
+          <h2 class="section-title">פרויקטים <span>נבחרים</span></h2>
+          <p class="section-subtitle">
+            דוגמאות לעבודות שביצעתי במהלך הקריירה שלי
+          </p>
+        </div>
+
+        <div class="projects-grid">
+          <div class="project-card">
+            <div class="project-image p1">
+              <div class="project-badge">סביבה</div>
+            </div>
+            <div class="project-body">
+              <div class="project-title">מערכת ניהול משאבי טבע</div>
+              <div class="project-text">
+                מיפוי וניטור משאבי טבע ואזורים שמורים באמצעות שכבות GIS ונתוני שטח מעודכנים.
+              </div>
+            </div>
+          </div>
+
+          <div class="project-card">
+            <div class="project-image p2">
+              <div class="project-badge">תכנון עירוני</div>
+            </div>
+            <div class="project-body">
+              <div class="project-title">ניתוח מרחבי לפיתוח עירוני</div>
+              <div class="project-text">
+                ניתוח מרחבי מעמיק לתכנון פיתוח אזורי מגורים ומסחר חדשים ותמיכה בהחלטות עירוניות.
+              </div>
+            </div>
+          </div>
+
+          <div class="project-card">
+            <div class="project-image p3">
+              <div class="project-badge">תחבורה</div>
+            </div>
+            <div class="project-body">
+              <div class="project-title">מיפוי רשת תחבורה ארצית</div>
+              <div class="project-text">
+                פרויקט מקיף של מיפוי תשתיות כבישים, תחבורה ציבורית וניתוח נגישות מרחבית.
+              </div>
+            </div>
+          </div>
+
+          <div class="project-card">
+            <div class="project-image p4">
+              <div class="project-badge">תשתיות עירוניות</div>
+            </div>
+            <div class="project-body">
+              <div class="project-title">מיפוי תשתיות עירוניות</div>
+              <div class="project-text">
+                מיפוי דיגיטלי מפורט של תשתיות עירוניות ורשתות תת-קרקעיות לצורך תחזוקה ותכנון.
+              </div>
+            </div>
+          </div>
+
+          <div class="project-card">
+            <div class="project-image p5">
+              <div class="project-badge">סביבה</div>
+            </div>
+            <div class="project-body">
+              <div class="project-title">הערכת השפעה סביבתית</div>
+              <div class="project-text">
+                ניתוחים מרחביים מתקדמים לפרויקטים של פיתוח עם דגש על שמירה על הסביבה ומשאבי הטבע.
+              </div>
+            </div>
+          </div>
+
+          <div class="project-card">
+            <div class="project-image p6">
+              <div class="project-badge">תשתיות לאומיות</div>
+            </div>
+            <div class="project-body">
+              <div class="project-title">מיפוי ותכנון תשתיות לאומיות</div>
+              <div class="project-text">
+                שילוב נתוני GIS ממקורות שונים לצורך תכנון והקמת תשתיות תחבורה, חשמל ומים בקנה מידה רחב.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="contact" id="contact">
+      <div class="container">
+        <div class="section-heading">
+          <h2 class="section-title">בואו <span>נדבר</span></h2>
+          <p class="section-subtitle">
+            מוזמנים ליצור קשר ואשמח לעזור עם פרויקט ה-GIS הבא שלכם
+          </p>
+        </div>
+
+        <div class="contact-layout">
+          <div class="contact-text">
+            <p>
+              אני כאן כדי לעזור! אשמח לענות על כל שאלה או לקבוע פגישת ייעוץ ראשונית ללא התחייבות.
+              שירות מהיר ואישי, עם דגש על התאמת הפתרון המדויק ביותר עבורכם.
+            </p>
+
+            <div class="contact-info-grid">
+              <div class="contact-info-card">
+                <div>
+                  <div class="contact-info-label">אימייל</div>
+                  <div class="contact-info-value">pinistern@gmail.com</div>
+                </div>
+                <div class="contact-info-icon">✉️</div>
+              </div>
+
+              <div class="contact-info-card">
+                <div>
+                  <div class="contact-info-label">טלפון</div>
+                  <div class="contact-info-value">050-3448884</div>
+                </div>
+                <div class="contact-info-icon">📞</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-card">
+            <form action="#" method="post">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="name">שם מלא <span>*</span></label>
+                  <input id="name" name="name" type="text" placeholder="הכנס את שמך המלא" required />
+                </div>
+
+                <div class="form-group">
+                  <label for="email">אימייל <span>*</span></label>
+                  <input id="email" name="email" type="email" placeholder="your@email.com" required />
+                </div>
+
+                <div class="form-group">
+                  <label for="phone">טלפון</label>
+                  <input id="phone" name="phone" type="tel" placeholder="050-1234567" />
+                </div>
+
+                <div class="form-group">
+                  <label for="company">חברה / ארגון</label>
+                  <input id="company" name="company" type="text" placeholder="שם החברה או הארגון" />
+                </div>
+
+                <div class="form-group full">
+                  <label for="message">הודעה <span>*</span></label>
+                  <textarea id="message" name="message" placeholder="ספרו לי על הפרויקט שלכם..." required></textarea>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" class="btn-submit">
+                  שלח הודעה ✈️
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      © כל הזכויות שמורות – PS-GIS | נבנה ומתארח ב-GitHub Pages
+    </div>
+  </footer>
+</div>
+</body>
+</html>
